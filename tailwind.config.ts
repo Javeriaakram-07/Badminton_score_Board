@@ -121,6 +121,7 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "fire-glow": "fire-glow 1.5s ease-in-out infinite",
         "confetti-fall": "confetti-fall 3s ease-in forwards",
+        "score-flip": "score-flip 0.6s ease-in-out",
       },
     },
   },
