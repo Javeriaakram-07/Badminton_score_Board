@@ -58,8 +58,9 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
         badminton: {
-          orange: "hsl(var(--badminton-orange))",
-          red: "hsl(var(--badminton-red))",
+          blue: "hsl(var(--badminton-blue))",
+          "blue-light": "hsl(var(--badminton-blue-light))",
+          "blue-dark": "hsl(var(--badminton-blue-dark))",
           court: "hsl(var(--badminton-court))",
         },
       },
