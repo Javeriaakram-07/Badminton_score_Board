@@ -57,6 +57,11 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        badminton: {
+          orange: "hsl(var(--badminton-orange))",
+          red: "hsl(var(--badminton-red))",
+          court: "hsl(var(--badminton-court))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -80,10 +85,30 @@ export default {
             height: "0",
           },
         },
+        "fire-glow": {
+          "0%, 100%": {
+            boxShadow: "0 0 10px rgba(255, 140, 0, 0.5), 0 0 20px rgba(255, 69, 0, 0.3)",
+          },
+          "50%": {
+            boxShadow: "0 0 20px rgba(255, 140, 0, 0.8), 0 0 40px rgba(255, 69, 0, 0.6)",
+          },
+        },
+        "confetti-fall": {
+          "0%": {
+            opacity: "1",
+            transform: "translateY(0) rotate(0deg)",
+          },
+          "100%": {
+            opacity: "0",
+            transform: "translateY(100vh) rotate(720deg)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fire-glow": "fire-glow 1.5s ease-in-out infinite",
+        "confetti-fall": "confetti-fall 3s ease-in forwards",
       },
     },
   },
