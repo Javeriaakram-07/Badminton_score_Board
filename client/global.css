@@ -58,10 +58,11 @@
 
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    /* Badminton app colors - More subtle and muted */
-    --badminton-orange: 32 85% 55%;
-    --badminton-red: 0 75% 50%;
-    --badminton-court: 40 60% 88%;
+    /* Badminton app colors - Blue theme */
+    --badminton-blue: 215 80% 45%;
+    --badminton-blue-light: 215 75% 60%;
+    --badminton-blue-dark: 215 85% 35%;
+    --badminton-court: 215 70% 50%;
   }
 
   .dark {
