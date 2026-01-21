@@ -19,22 +19,6 @@ interface GameState {
   currentServicePlayer: number;
 }
 
-// Real Bitmoji character emojis
-const BITMOJI_AVATARS = [
-  "🧔",
-  "👨‍🦰",
-  "🧑",
-  "👨",
-  "👩",
-  "👩‍🦱",
-  "🧑‍🦲",
-  "👨‍🦳",
-];
-
-const getRandomBitmoji = () => {
-  return BITMOJI_AVATARS[Math.floor(Math.random() * BITMOJI_AVATARS.length)];
-};
-
 const Confetti = ({ isActive }: { isActive: boolean }) => {
   if (!isActive) return null;
 
@@ -55,11 +39,11 @@ const Confetti = ({ isActive }: { isActive: boolean }) => {
             left: `${conf.left}%`,
             top: "-10px",
             backgroundColor: [
-              "#D17A3A",
-              "#C98050",
-              "#D68555",
-              "#B85A45",
-              "#A04035",
+              "#2196F3",
+              "#42A5F5",
+              "#1976D2",
+              "#1565C0",
+              "#0D47A1",
             ][Math.floor(Math.random() * 5)],
             animationDelay: `${conf.delay}s`,
             animationDuration: `${conf.duration}s`,
@@ -70,88 +54,125 @@ const Confetti = ({ isActive }: { isActive: boolean }) => {
   );
 };
 
-const PlayerCard = ({
-  player,
-  teamColor,
-  isServing,
-  onClickService,
-  bitmoji,
-}: {
-  player: Player;
-  teamColor: "orange" | "red";
-  isServing: boolean;
-  onClickService: () => void;
-  bitmoji: string;
-}) => {
-  const bgColor = teamColor === "orange" ? "bg-orange-500" : "bg-red-500";
-  const glowClass = isServing ? "animate-fire-glow shadow-2xl" : "opacity-70";
+const AnimatedScore = ({ value }: { value: number }) => {
+  const [prevValue, setPrevValue] = useState(value);
+  const [animating, setAnimating] = useState(false);
+
+  if (value !== prevValue) {
+    setPrevValue(value);
+    setAnimating(true);
+    setTimeout(() => setAnimating(false), 600);
+  }
 
   return (
-    <div className="flex flex-col items-center gap-2 flex-1">
-      <div
-        className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full ${bgColor} flex items-center justify-center text-4xl sm:text-5xl font-bold cursor-pointer transition-all ${glowClass}`}
-        onClick={onClickService}
-        title="Click to set as server"
-      >
-        {bitmoji}
-      </div>
-      <div className="text-center w-full px-1">
-        <p className="font-semibold text-xs sm:text-sm line-clamp-2">{player.name}</p>
-        <button
-          onClick={onClickService}
-          className={`mt-1 px-2 py-0.5 text-xs rounded-full font-medium transition-all ${
-            isServing
-              ? "bg-orange-500 text-white"
-              : "bg-gray-400 text-gray-700"
-          }`}
-        >
-          SERVICE
-        </button>
-      </div>
+    <div
+      className={`text-8xl sm:text-9xl font-bold text-blue-600 transition-all ${
+        animating ? "animate-score-flip scale-110" : "scale-100"
+      }`}
+    >
+      {value}
     </div>
   );
 };
 
-const ScoreBoard = ({
+const PlayerCard = ({
+  player,
+  onClickService,
+  isServing,
+}: {
+  player: Player;
+  onClickService: () => void;
+  isServing: boolean;
+}) => {
+  const glowClass = isServing ? "animate-fire-glow shadow-2xl" : "shadow-md";
+
+  return (
+    <div className="w-full flex flex-col items-center gap-2">
+      <div className="text-center">
+        <p className="font-semibold text-base sm:text-lg text-gray-800">
+          {player.name}
+        </p>
+      </div>
+      <button
+        onClick={onClickService}
+        className={`w-32 sm:w-40 px-4 py-3 rounded-lg font-bold text-white transition-all ${glowClass} ${
+          isServing
+            ? "bg-blue-600 hover:bg-blue-700"
+            : "bg-blue-400 hover:bg-blue-500"
+        }`}
+      >
+        SERVICE
+      </button>
+    </div>
+  );
+};
+
+const TeamSection = ({
   team,
-  teamColor,
-  onIncrement,
+  teamIndex,
+  isServing,
+  onServiceClick,
+  onGoal,
   onFoul,
   winningPoints,
+  gameState,
 }: {
   team: Team;
-  teamColor: "orange" | "red";
-  onIncrement: () => void;
+  teamIndex: number;
+  isServing: (playerIdx: number) => boolean;
+  onServiceClick: (playerIdx: number) => void;
+  onGoal: () => void;
   onFoul: () => void;
   winningPoints: number;
+  gameState: GameState;
 }) => {
-  const bgColor = teamColor === "orange" ? "bg-orange-500" : "bg-red-500";
   const isWinning = team.score >= winningPoints;
 
   return (
-    <div className={`${bgColor} rounded-2xl p-4 sm:p-6 text-white flex flex-col items-center gap-3 min-w-max h-fit`}>
-      <h3 className="text-lg sm:text-2xl font-bold text-center">{team.name}</h3>
-      <div className="text-5xl sm:text-6xl font-bold">{team.score}</div>
-      <p className="text-xs sm:text-sm opacity-90">Target: {winningPoints}</p>
-      <div className="flex gap-2 w-full">
+    <div className="flex-1 flex flex-col items-center justify-between h-full py-4 sm:py-8 px-2 sm:px-4 bg-gradient-to-b from-blue-50 to-white">
+      {/* Score Section */}
+      <div className="flex flex-col items-center gap-3 sm:gap-4">
+        <div className="text-2xl sm:text-3xl font-bold text-blue-900">
+          {team.name}
+        </div>
+        <AnimatedScore value={team.score} />
+        <div className="text-sm sm:text-base text-gray-600">
+          Target: {winningPoints}
+        </div>
+        {isWinning && (
+          <div className="text-lg sm:text-2xl font-bold text-blue-600 animate-bounce">
+            🏆 WINNING!
+          </div>
+        )}
+      </div>
+
+      {/* Players Section */}
+      <div className="flex flex-col gap-4 sm:gap-6 items-center w-full flex-1 justify-center">
+        {team.players.map((player, idx) => (
+          <PlayerCard
+            key={idx}
+            player={player}
+            onClickService={() => onServiceClick(idx)}
+            isServing={isServing(idx)}
+          />
+        ))}
+      </div>
+
+      {/* Buttons Section */}
+      <div className="flex gap-3 sm:gap-4 w-full flex-col sm:flex-row">
         <button
-          onClick={onIncrement}
-          className="flex-1 bg-white text-orange-500 font-bold py-2 sm:py-3 rounded-lg hover:bg-gray-100 transition-all text-lg"
+          onClick={onGoal}
+          className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 sm:py-4 rounded-lg transition-all text-lg sm:text-xl"
         >
-          +1
+          ⚡ Goal
         </button>
         <button
           onClick={onFoul}
-          className="flex-1 bg-white text-red-500 font-bold py-2 sm:py-3 rounded-lg hover:bg-gray-100 transition-all text-lg"
+          className="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3 sm:py-4 rounded-lg transition-all text-lg sm:text-xl"
         >
-          -1
+          ✋ Foul
         </button>
       </div>
-      {isWinning && (
-        <div className="text-center mt-2">
-          <p className="text-sm sm:text-lg font-bold animate-bounce">🏆 WINNING! 🏆</p>
-        </div>
-      )}
     </div>
   );
 };
@@ -161,7 +182,7 @@ const WelcomeModal = ({ onSelect }: { onSelect: (count: 2 | 4) => void }) => {
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-orange-600 mb-2">
+          <h1 className="text-4xl font-bold text-blue-600 mb-2">
             🏸 Badminton Hub
           </h1>
           <p className="text-gray-600 mb-8">Welcome to your scoring companion!</p>
@@ -170,13 +191,13 @@ const WelcomeModal = ({ onSelect }: { onSelect: (count: 2 | 4) => void }) => {
         <div className="space-y-4">
           <button
             onClick={() => onSelect(2)}
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-105 text-lg"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-105 text-lg"
           >
             👥 2 Players (1v1)
           </button>
           <button
             onClick={() => onSelect(4)}
-            className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-105 text-lg"
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-105 text-lg"
           >
             👥👥 4 Players (2v2)
           </button>
@@ -244,7 +265,7 @@ const SetupModal = ({
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-3xl p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl">
-        <h2 className="text-3xl font-bold text-center mb-6 text-orange-600">
+        <h2 className="text-3xl font-bold text-center mb-6 text-blue-600">
           Set Up Your Teams
         </h2>
 
@@ -254,12 +275,12 @@ const SetupModal = ({
               key={teamIndex}
               className={`p-6 rounded-2xl ${
                 teamIndex === 0
-                  ? "bg-orange-50 border-2 border-orange-400"
-                  : "bg-red-50 border-2 border-red-400"
+                  ? "bg-blue-50 border-2 border-blue-400"
+                  : "bg-blue-50 border-2 border-blue-300"
               }`}
             >
-              <h3 className="font-bold text-lg mb-4">
-                {teamIndex === 0 ? "🟠" : "🔴"} Team Name
+              <h3 className="font-bold text-lg mb-4 text-blue-900">
+                Team {teamIndex === 0 ? "A" : "B"} Name
               </h3>
               <input
                 type="text"
@@ -271,11 +292,11 @@ const SetupModal = ({
                 placeholder="Enter team name"
               />
 
-              <h4 className="font-bold text-lg mb-4">Players</h4>
+              <h4 className="font-bold text-lg mb-4 text-blue-900">Players</h4>
               <div className="space-y-3">
                 {team.players.map((player, playerIndex) => (
                   <div key={playerIndex}>
-                    <label className="block text-sm font-semibold mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Player {playerIndex + 1}
                     </label>
                     <input
@@ -300,7 +321,7 @@ const SetupModal = ({
 
         <button
           onClick={handleStart}
-          className="w-full mt-8 bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-xl transition-all text-lg"
+          className="w-full mt-8 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-all text-lg"
         >
           Continue to Winning Points
         </button>
@@ -319,7 +340,7 @@ const WinningPointsModal = ({
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl">
-        <h2 className="text-2xl font-bold text-center mb-6 text-orange-600">
+        <h2 className="text-2xl font-bold text-center mb-6 text-blue-600">
           Winning Points
         </h2>
 
@@ -332,7 +353,7 @@ const WinningPointsModal = ({
             <button
               key={points}
               onClick={() => onSelect(points)}
-              className="w-full bg-gray-100 hover:bg-orange-500 hover:text-white text-gray-800 font-bold py-3 rounded-lg transition-all"
+              className="w-full bg-gray-100 hover:bg-blue-500 hover:text-white text-gray-800 font-bold py-3 rounded-lg transition-all"
             >
               {points} Points
             </button>
@@ -354,7 +375,7 @@ const WinningPointsModal = ({
               const points = parseInt(custom);
               if (points > 0) onSelect(points);
             }}
-            className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 rounded-lg transition-all"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 rounded-lg transition-all"
           >
             Set
           </button>
@@ -375,7 +396,7 @@ const WinnerModal = ({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40">
       <div className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
         <div className="text-6xl mb-4">🏆</div>
-        <h2 className="text-4xl font-bold mb-4 text-orange-600">
+        <h2 className="text-4xl font-bold mb-4 text-blue-600">
           {winnerTeam.name} Wins!
         </h2>
         <p className="text-gray-600 mb-4 text-lg">
@@ -390,7 +411,7 @@ const WinnerModal = ({
 
         <button
           onClick={onRestart}
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-xl transition-all text-lg"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-all text-lg"
         >
           Play Again
         </button>
@@ -406,7 +427,6 @@ export default function Index() {
   const [playerCount, setPlayerCount] = useState<2 | 4 | null>(null);
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [showWinner, setShowWinner] = useState(false);
-  const [playerBitmojis, setPlayerBitmojis] = useState<string[][]>([]);
 
   const handlePlayerCountSelect = (count: 2 | 4) => {
     setPlayerCount(count);
@@ -414,10 +434,6 @@ export default function Index() {
   };
 
   const handleSetupComplete = (teams: Team[]) => {
-    const bitmojis = teams.map((team) =>
-      team.players.map(() => getRandomBitmoji())
-    );
-    setPlayerBitmojis(bitmojis);
     setGameState({
       teams,
       winningPoints: 21,
@@ -440,7 +456,7 @@ export default function Index() {
 
     const newTeams = gameState.teams.map((t, i) => {
       if (i === teamIndex) {
-        return { ...t, score: Math.max(0, t.score + delta) };
+        return { ...t, score: t.score + delta };
       }
       return t;
     });
@@ -482,7 +498,6 @@ export default function Index() {
     setPlayerCount(null);
     setGameState(null);
     setShowWinner(false);
-    setPlayerBitmojis([]);
   };
 
   const handleExit = () => {
@@ -503,94 +518,54 @@ export default function Index() {
 
   if (!gameState) return null;
 
-  const backgroundStyle = {
-    backgroundImage: `linear-gradient(135deg, rgba(220, 120, 40, 0.05) 0%, rgba(200, 90, 60, 0.05) 100%)`,
-    backgroundColor: "#F9F5F0",
-  };
-
   return (
-    <div
-      style={backgroundStyle}
-      className="w-screen h-screen flex flex-col overflow-hidden relative"
-    >
+    <div className="w-screen h-screen flex flex-col overflow-hidden bg-gradient-to-br from-blue-100 to-blue-50">
       <Confetti isActive={showWinner} />
 
       {/* Header with Exit Button */}
-      <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 bg-white/80 backdrop-blur border-b border-gray-200">
-        <div className="flex-1 text-center">
-          <h1 className="text-2xl sm:text-3xl font-bold text-orange-600">
-            🏸 Badminton Hub
-          </h1>
-        </div>
+      <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 bg-blue-600 text-white shadow-lg">
+        <h1 className="text-2xl sm:text-3xl font-bold">
+          🏸 Badminton Hub
+        </h1>
         <button
           onClick={handleExit}
-          className="ml-4 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition-all text-sm whitespace-nowrap"
+          className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg transition-all text-sm whitespace-nowrap"
         >
           Exit Game
         </button>
       </div>
 
-      {/* Main Game Board - Single Page Layout */}
-      <div className="flex-1 flex items-center justify-between px-2 sm:px-4 gap-2 sm:gap-4 overflow-hidden">
+      {/* Main Game Board - Teams on sides, scoreboard info in middle */}
+      <div className="flex-1 flex gap-0 overflow-hidden">
         {/* Team 1 - Left Side */}
-        <div className="flex-1 flex flex-col items-center justify-center h-full overflow-hidden">
-          <div className="flex flex-col gap-3 sm:gap-4 items-center w-full">
-            {gameState.teams[0].players.map((player, idx) => (
-              <PlayerCard
-                key={idx}
-                player={player}
-                teamColor="orange"
-                isServing={
-                  gameState.currentServiceTeam === 0 &&
-                  gameState.currentServicePlayer === idx
-                }
-                onClickService={() => handleServiceClick(0, idx)}
-                bitmoji={playerBitmojis[0]?.[idx] || getRandomBitmoji()}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Center - Scoreboards and Info */}
-        <div className="flex flex-col items-center justify-center gap-3 sm:gap-6 h-full">
-          <div className="text-xs sm:text-sm text-gray-600 font-semibold">
-            Winning: {gameState.winningPoints}
-          </div>
-          <ScoreBoard
-            team={gameState.teams[0]}
-            teamColor="orange"
-            onIncrement={() => handleScoreUpdate(0, 1)}
-            onFoul={() => handleScoreUpdate(0, -1)}
-            winningPoints={gameState.winningPoints}
-          />
-          <div className="text-xl sm:text-2xl font-bold text-gray-400">VS</div>
-          <ScoreBoard
-            team={gameState.teams[1]}
-            teamColor="red"
-            onIncrement={() => handleScoreUpdate(1, 1)}
-            onFoul={() => handleScoreUpdate(1, -1)}
-            winningPoints={gameState.winningPoints}
-          />
-        </div>
+        <TeamSection
+          team={gameState.teams[0]}
+          teamIndex={0}
+          isServing={(idx) =>
+            gameState.currentServiceTeam === 0 &&
+            gameState.currentServicePlayer === idx
+          }
+          onServiceClick={(idx) => handleServiceClick(0, idx)}
+          onGoal={() => handleScoreUpdate(0, 1)}
+          onFoul={() => handleScoreUpdate(0, -1)}
+          winningPoints={gameState.winningPoints}
+          gameState={gameState}
+        />
 
         {/* Team 2 - Right Side */}
-        <div className="flex-1 flex flex-col items-center justify-center h-full overflow-hidden">
-          <div className="flex flex-col gap-3 sm:gap-4 items-center w-full">
-            {gameState.teams[1].players.map((player, idx) => (
-              <PlayerCard
-                key={idx}
-                player={player}
-                teamColor="red"
-                isServing={
-                  gameState.currentServiceTeam === 1 &&
-                  gameState.currentServicePlayer === idx
-                }
-                onClickService={() => handleServiceClick(1, idx)}
-                bitmoji={playerBitmojis[1]?.[idx] || getRandomBitmoji()}
-              />
-            ))}
-          </div>
-        </div>
+        <TeamSection
+          team={gameState.teams[1]}
+          teamIndex={1}
+          isServing={(idx) =>
+            gameState.currentServiceTeam === 1 &&
+            gameState.currentServicePlayer === idx
+          }
+          onServiceClick={(idx) => handleServiceClick(1, idx)}
+          onGoal={() => handleScoreUpdate(1, 1)}
+          onFoul={() => handleScoreUpdate(1, -1)}
+          winningPoints={gameState.winningPoints}
+          gameState={gameState}
+        />
       </div>
 
       {/* Winner Modal */}
