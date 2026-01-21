@@ -87,10 +87,10 @@ export default {
         },
         "fire-glow": {
           "0%, 100%": {
-            boxShadow: "0 0 10px rgba(255, 140, 0, 0.5), 0 0 20px rgba(255, 69, 0, 0.3)",
+            boxShadow: "0 0 40px rgba(220, 120, 40, 0.7), 0 0 80px rgba(255, 100, 20, 0.5), 0 0 120px rgba(255, 140, 0, 0.3)",
           },
           "50%": {
-            boxShadow: "0 0 20px rgba(255, 140, 0, 0.8), 0 0 40px rgba(255, 69, 0, 0.6)",
+            boxShadow: "0 0 60px rgba(220, 120, 40, 0.9), 0 0 100px rgba(255, 100, 20, 0.7), 0 0 150px rgba(255, 140, 0, 0.5)",
           },
         },
         "confetti-fall": {
