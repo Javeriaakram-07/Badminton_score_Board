@@ -88,10 +88,21 @@ export default {
         },
         "fire-glow": {
           "0%, 100%": {
-            boxShadow: "0 0 40px rgba(220, 120, 40, 0.7), 0 0 80px rgba(255, 100, 20, 0.5), 0 0 120px rgba(255, 140, 0, 0.3)",
+            boxShadow: "0 0 40px rgba(66, 165, 245, 0.7), 0 0 80px rgba(33, 150, 243, 0.5), 0 0 120px rgba(25, 103, 210, 0.3)",
           },
           "50%": {
-            boxShadow: "0 0 60px rgba(220, 120, 40, 0.9), 0 0 100px rgba(255, 100, 20, 0.7), 0 0 150px rgba(255, 140, 0, 0.5)",
+            boxShadow: "0 0 60px rgba(66, 165, 245, 0.9), 0 0 100px rgba(33, 150, 243, 0.7), 0 0 150px rgba(25, 103, 210, 0.5)",
+          },
+        },
+        "score-flip": {
+          "0%": {
+            transform: "rotateX(0deg)",
+          },
+          "50%": {
+            transform: "rotateX(90deg)",
+          },
+          "100%": {
+            transform: "rotateX(0deg)",
           },
         },
         "confetti-fall": {
