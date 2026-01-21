@@ -185,7 +185,9 @@ const WelcomeModal = ({ onSelect }: { onSelect: (count: 2 | 4) => void }) => {
           <h1 className="text-4xl font-bold text-blue-600 mb-2">
             🏸 Badminton Hub
           </h1>
-          <p className="text-gray-600 mb-8">Welcome to your scoring companion!</p>
+          <p className="text-gray-600 mb-8">
+            Welcome to your scoring companion!
+          </p>
         </div>
 
         <div className="space-y-4">
@@ -244,7 +246,7 @@ const SetupModal = ({
   const handlePlayerNameChange = (
     teamIndex: number,
     playerIndex: number,
-    name: string
+    name: string,
   ) => {
     const newTeams = [...teams];
     newTeams[teamIndex].players[playerIndex].name = name;
@@ -306,7 +308,7 @@ const SetupModal = ({
                         handlePlayerNameChange(
                           teamIndex,
                           playerIndex,
-                          e.target.value
+                          e.target.value,
                         )
                       }
                       className="w-full border-2 border-gray-300 rounded-lg p-3"
@@ -464,7 +466,7 @@ export default function Index() {
     const newState = { ...gameState, teams: newTeams };
 
     const winner = newTeams.findIndex(
-      (t) => t.score >= gameState.winningPoints
+      (t) => t.score >= gameState.winningPoints,
     );
     if (winner !== -1) {
       newState.winner = winner;
@@ -509,7 +511,9 @@ export default function Index() {
   }
 
   if (gameMode === "setup" && playerCount) {
-    return <SetupModal playerCount={playerCount} onStart={handleSetupComplete} />;
+    return (
+      <SetupModal playerCount={playerCount} onStart={handleSetupComplete} />
+    );
   }
 
   if (gameMode === "winningPoints") {
@@ -524,9 +528,7 @@ export default function Index() {
 
       {/* Header with Exit Button */}
       <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 bg-blue-600 text-white shadow-lg">
-        <h1 className="text-2xl sm:text-3xl font-bold">
-          🏸 Badminton Hub
-        </h1>
+        <h1 className="text-2xl sm:text-3xl font-bold">🏸 Badminton Hub</h1>
         <button
           onClick={handleExit}
           className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg transition-all text-sm whitespace-nowrap"
